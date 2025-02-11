@@ -27,17 +27,25 @@ const Gameboard = (function(){
   return {board, printBoard};
 })();
 
-//getting the value of cells, finding out what mark each cell has
-function Mark(){
-  let value = "*";
-
-}
-
 //playing the game - user input
-function gameController(){
+const game = (() =>{
+
+  //make players 1 and 2
+  function createPlayers(name, mark){
+
+    return {name, mark}
+  }
+
+  const player1 = createPlayers("player1", "X");
+  const player2 = createPlayers("player2", "O");
+
+  const player1Mark = player1.mark;
+  const player2Mark = player2.mark;
 
   const board = Gameboard.board;
   const printBoard = Gameboard.printBoard
+
+  //print board on startup
   printBoard();
 
   //place mark on specified cell
@@ -50,7 +58,9 @@ function gameController(){
     printBoard();
   }
 
-  return {board, printBoard, placeMark}
-}
+  return {board, printBoard, placeMark, player1Mark, player2Mark}
+})();
 
-const game = gameController();
+
+// play by entering :
+// game.placeMark(playermark, row, column)
