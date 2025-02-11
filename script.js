@@ -15,7 +15,16 @@ const Gameboard = (function(){
       board[i].push("*");
     }
   }
-  return {board};
+
+  //print board in console so i dont have to keep opening the array
+  //!!! delete once ui is made
+  const printBoard = () =>{
+    for (let i = 0; i < board.length; i++){
+      console.dir(board[i].join("  "));
+    }
+  }
+
+  return {board, printBoard};
 })();
 
 //getting the value of cells, finding out what mark each cell has
@@ -28,6 +37,8 @@ function Mark(){
 function gameController(){
 
   const board = Gameboard.board;
+  const printBoard = Gameboard.printBoard
+  printBoard();
 
   //place mark on specified cell
   const placeMark = (player, row, column) =>{
@@ -36,10 +47,10 @@ function gameController(){
     board[row].splice(column, 1, player);
 
     //brings up updated board
-    console.log(game.board);
+    printBoard();
   }
 
-  return {board, placeMark}
+  return {board, printBoard, placeMark}
 }
 
 const game = gameController();
