@@ -1,4 +1,4 @@
-function Gameboard(){
+const Gameboard = (function(){
 
   //create a 3 x 3 grid that will show up as an array
   const board = [];
@@ -16,7 +16,7 @@ function Gameboard(){
     }
   }
   return {board};
-}
+})();
 
 //getting the value of cells, finding out what mark each cell has
 function Mark(){
@@ -27,16 +27,16 @@ function Mark(){
 //playing the game - user input
 function gameController(){
 
-  const board = Gameboard();
+  const board = Gameboard.board;
 
   //place mark on specified cell
   const placeMark = (player, row, column) =>{
 
     //go to board array item specified by "row" and replace inner item at index "column" with "player"
-    board.board[row].splice(column, 1, player);
+    board[row].splice(column, 1, player);
 
     //brings up updated board
-    console.log(game.board.board);
+    console.log(game.board);
   }
 
   return {board, placeMark}
