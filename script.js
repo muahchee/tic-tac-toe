@@ -72,25 +72,46 @@ const Game = (() =>{
 
     let playermark;
 
-    // if turnOrder is even, it's player2's turn. player1 if its odd
-    if (turnOrder % 2 == 0){
-      playermark = player2.getMark();
-      console.log(`Player 2's turn!`);
-    } else{
-      playermark = player1.getMark();
-      console.log(`Player 1's turn!`);
-    }
+    //Check if move is legal. Make sure the space isn't populated with opponent's mark. Also prevent out of bounds.
+    if (board[row][column] == "*" && row <=2 && column <= 2){
 
-    //go to board array item specified by "row" and replace inner item at index "column" with "player"
-    board[row].splice(column, 1, playermark);
+      // Taking turns. if turnOrder is even, it's player2's turn. player1 if its odd
+      if (turnOrder % 2 == 0){
+        playermark = player2.getMark();
+      } else{
+        playermark = player1.getMark();
+      }
 
-    nextTurn();
-    
-    //brings up updated board
-    printBoard();
+      //Placing the Mark. go to board array item specified by "row" and replace inner item at index "column" with "player"
+      board[row].splice(column, 1, playermark);
+
+      //add to turnOrder counter
+      nextTurn();
+      
+      //brings up updated board
+      printBoard();
+      if (turnOrder % 2 == 0){
+        console.log("Player 2's turn!");
+      } else{
+        console.log("Player 1's turn!");
+      }
+
+    } else {
+      //illegal move message
+      console.log("Please input values 0-2 for the row and column.")
+      console.log("You're not allowed to overwrite your opponent's mark!")
+
+      printBoard();
+      if (turnOrder % 2 == 0){
+        console.log("Still Player 2's turn!");
+      } else{
+        console.log("Still Player 1's turn!");
+      }
+    };
+
   }
 
-  return {board, printBoard, placeMark, player1, player2}
+  return {board, printBoard, placeMark}
 })();
 
 
