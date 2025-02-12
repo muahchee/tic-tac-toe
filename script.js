@@ -20,45 +20,77 @@ const Gameboard = (function(){
   //!!! delete once ui is made
   const printBoard = () =>{
     for (let i = 0; i < board.length; i++){
-      console.dir(board[i].join("  "));
+      console.log(board[i].join("  "));
     }
+    console.log("syntax: game.placeMark(row, column)")
   }
 
   return {board, printBoard};
 })();
 
-//playing the game - user input
-const game = (() =>{
-
+const Players = (() =>{
   //make players 1 and 2
-  function createPlayers(name, mark){
+  function createPlayers(name){
+    let mark;
 
-    return {name, mark}
+    if (name == "player1"){
+      mark = "X";
+    } else if (name == "player2"){
+      mark = "O";
+    }
+
+    //to prevent player from changing the mark
+    const getMark = () => mark;
+
+    return {name, getMark}
   }
 
-  const player1 = createPlayers("player1", "X");
-  const player2 = createPlayers("player2", "O");
+  const player1 = createPlayers("player1");
+  const player2 = createPlayers("player2");
 
-  const player1Mark = player1.mark;
-  const player2Mark = player2.mark;
+  return{ player1, player2 }
+})()
 
+//playing the game - user input
+const Game = (() =>{
+
+  const player1 = Players.player1;
+  const player2 = Players.player2;
+  
   const board = Gameboard.board;
   const printBoard = Gameboard.printBoard
 
+  let turnOrder = 1;
+  const nextTurn = () => turnOrder++;
+
   //print board on startup
   printBoard();
+  console.log("Player 1's turn!")
 
   //place mark on specified cell
-  const placeMark = (player, row, column) =>{
+  const placeMark = (row, column) =>{
+
+    let playermark;
+
+    // if turnOrder is even, it's player2's turn. player1 if its odd
+    if (turnOrder % 2 == 0){
+      playermark = player2.getMark();
+      console.log(`Player 2's turn!`);
+    } else{
+      playermark = player1.getMark();
+      console.log(`Player 1's turn!`);
+    }
 
     //go to board array item specified by "row" and replace inner item at index "column" with "player"
-    board[row].splice(column, 1, player);
+    board[row].splice(column, 1, playermark);
 
+    nextTurn();
+    
     //brings up updated board
     printBoard();
   }
 
-  return {board, printBoard, placeMark, player1Mark, player2Mark}
+  return {board, printBoard, placeMark, player1, player2}
 })();
 
 
