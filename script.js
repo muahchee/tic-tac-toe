@@ -7,14 +7,18 @@ const Gameboard = (function(){
 
   //create for loop to make the array items for board (which will function as rows). each board item will have an inner array
   //nest another for loop so every time a row is created, create three inner items for it (which will be the columns)
-  for (i = 0; i < rows; i++){
-    board[i] = [];
+  const newBoard = () => {
+    for (i = 0; i < rows; i++){
+      board[i] = [];
 
-    for (j = 0; j < cols; j++){
-      //* is used for empty cell !!! will replace with Mark()
-      board[i].push("*");
+      for (j = 0; j < cols; j++){
+        //* is used for empty cell !!! will replace with Mark()
+        board[i].push("*");
+      }
     }
   }
+
+  newBoard();
 
   //print board in console so i dont have to keep opening the array
   //!!! delete once ui is made
@@ -25,7 +29,7 @@ const Gameboard = (function(){
     console.log("syntax: game.placeMark(row, column)")
   }
 
-  return {board, printBoard};
+  return {board, printBoard, newBoard};
 })();
 
 const Players = (() =>{
@@ -42,13 +46,14 @@ const Players = (() =>{
     let winStatus = false;
 
     const winner = () => winStatus = true;
+    const resetWinner = () => winStatus = false;
 
     //to prevent player from changing info
     const getMark = () => mark;
     const getName = () => name;
     const getWinStatus = () => winStatus;
 
-    return {getName, getMark, getWinStatus, winner}
+    return {getName, getMark, getWinStatus, winner, resetWinner}
   }
 
   const player1 = createPlayers("player1");
@@ -73,16 +78,20 @@ const CheckWin = (() =>{
     for (let i = 0; i < board.length; i++){
       //checks if all items(column) in the array(row) is an X
       if (board[i].every(rowAllX)) {Players.player1.winner(); 
+        //get new updated status
         player1Win = Players.player1.getWinStatus();
         break;}
 
       //checks if all items(column) in the array(row) is an O
       if (board[i].every(rowAllO)) {Players.player2.winner(); 
+        //get new updated status
         player2Win = Players.player2.getWinStatus();
         break;}
     }
-    
   }
+  //--Check for vertical win --
+
+  //--Check for diagonal win --
 
   return {player1Win, player2Win, checkRowWin}
 
@@ -95,11 +104,14 @@ const Game = (() =>{
   const player1 = Players.player1;
   const player2 = Players.player2;
   
-  const board = Gameboard.board;
-  const printBoard = Gameboard.printBoard
+  let board = Gameboard.board;
+  const newBoard = Gameboard.newBoard;
+  const printBoard = Gameboard.printBoard;
 
   let turnOrder = 1;
   const nextTurn = () => turnOrder++;
+  const resetTurn = () => turnOrder = 1;
+  const getTurn = () => turnOrder;
 
   const checkRowWin = CheckWin.checkRowWin;
 
@@ -128,21 +140,49 @@ const Game = (() =>{
 
       //check if win condition is met
       checkRowWin();
-      if (player1.getWinStatus()  === true) {
-        console.log("Player 1 wins!")
-      } else if (player2.getWinStatus() === true) {
-        console.log("Player 2 wins!");
-      }
 
-      //add to turnOrder counter
-      nextTurn();
-      
-      //brings up updated board
-      printBoard();
-      if (turnOrder % 2 == 0){
-        console.log("Player 2's turn!");
+      if (player1.getWinStatus() === true){
+        console.log("Player 1 is the winner!");
+
+        //reset board
+        Gameboard.board = [];
+        Gameboard.newBoard()
+        printBoard();
+        resetTurn();
+        player1.resetWinner();
+        if (turnOrder % 2 == 0){
+          console.log("Player 2's turn!");
+        } else{
+          console.log("Player 1's turn!");
+        }  
+
+      } else if (player2.getWinStatus() === true){
+        console.log("Player 2 is the winner!");
+
+        //reset board
+        board = [];
+        newBoard()
+        printBoard();
+        resetTurn();
+        player2.resetWinner();
+        if (turnOrder % 2 == 0){
+          console.log("Player 2's turn!");
+        } else{
+          console.log("Player 1's turn!");
+        }  
+
       } else{
-        console.log("Player 1's turn!");
+        //if no winner is determined, continue to next turn
+        //add to turnOrder counter
+        nextTurn();
+          
+        //brings up updated board
+        printBoard();
+        if (turnOrder % 2 == 0){
+          console.log("Player 2's turn!");
+        } else{
+          console.log("Player 1's turn!");
+        }        
       }
 
     } else {
@@ -160,10 +200,5 @@ const Game = (() =>{
 
   }
 
-  return {placeMark}
+  return {placeMark, getTurn}
 })();
-
-Game.placeMark(2,1)
-Game.placeMark(1,1)
-Game.placeMark(2,0)
-Game.placeMark(0,0)
