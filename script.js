@@ -63,7 +63,7 @@ const Players = (() =>{
 })()
 
 const CheckWin = (() =>{
-  const board = Gameboard.board;
+  let board = Gameboard.board;
 
   let player1Win = Players.player1.getWinStatus();
   let player2Win = Players.player2.getWinStatus();
@@ -77,16 +77,22 @@ const CheckWin = (() =>{
 
     for (let i = 0; i < board.length; i++){
       //checks if all items(column) in the array(row) is an X
-      if (board[i].every(rowAllX)) {Players.player1.winner(); 
+      if (board[i].every(rowAllX)) {
+
+        Players.player1.winner(); 
         //get new updated status
         player1Win = Players.player1.getWinStatus();
-        break;}
+        break;
+      }
 
       //checks if all items(column) in the array(row) is an O
-      if (board[i].every(rowAllO)) {Players.player2.winner(); 
+      if (board[i].every(rowAllO)) {
+
+        Players.player2.winner(); 
         //get new updated status
         player2Win = Players.player2.getWinStatus();
-        break;}
+        break;
+      }
     }
   }
   //--Check for vertical win --
@@ -139,8 +145,54 @@ const CheckWin = (() =>{
   }
 
   //--Check for diagonal win --
+  const checkDiagonalWin = () =>{
 
-  return {player1Win, player2Win, checkRowWin, checkColWin}
+    if (
+      ( board[0][0] === "X" &&
+        board[1][1] === "X" &&
+        board[2][2] === "X" ) ||
+      ( board[0][2] === "X" &&
+        board[1][1] === "X" &&
+        board[2][0] === "X" )
+    ){
+      Players.player1.winner(); 
+      //get new updated status
+      player1Win = Players.player1.getWinStatus();
+    } else if(
+      ( board[0][0] === "O" &&
+        board[1][1] === "O" &&
+        board[2][2] === "O" ) ||
+      ( board[0][2] === "O" &&
+        board[1][1] === "O" &&
+        board[2][0] === "O" )
+    ){
+      Players.player2.winner(); 
+      //get new updated status
+      player2Win = Players.player2.getWinStatus();
+    }
+  }
+
+  //--Check for draw--
+  //A draw means no empty spaces and neither player has won
+  const checkDraw = () =>{
+    const checkEmptySpace = [];
+
+    board.forEach((item) =>{
+      //checks each row to see if there's an empty space, result is pushed to checkEmptySpace array
+      checkEmptySpace.push(item.includes("*"));
+    });
+
+    if (
+      //check if array includes true, meaning there's an empty space
+      checkEmptySpace.includes(true) === false &&
+      Players.player1.getWinStatus() === false &&
+      Players.player2.getWinStatus() === false
+    ){
+      return true
+    }
+  }
+
+  return {player1Win, player2Win, checkRowWin, checkColWin,checkDiagonalWin, checkDraw}
 
 })()
 
@@ -162,6 +214,8 @@ const Game = (() =>{
 
   const checkRowWin = CheckWin.checkRowWin;
   const checkColWin = CheckWin.checkColWin;
+  const checkDiagonalWin = CheckWin.checkDiagonalWin;
+  const checkDraw = CheckWin.checkDraw;
 
 
   //print board on startup
@@ -200,6 +254,8 @@ const Game = (() =>{
       //check if win condition is met
       checkRowWin();
       checkColWin();
+      checkDiagonalWin();
+      checkDraw();
 
       if (player1.getWinStatus() === true){
         printBoard();
@@ -211,6 +267,13 @@ const Game = (() =>{
       } else if (player2.getWinStatus() === true){
         printBoard();
         console.log("Player 2 is the winner!");
+
+        //reset board, prevent further input
+        board = [];
+
+      } else if(checkDraw() === true){
+        printBoard();
+        console.log("It's a draw!");
 
         //reset board, prevent further input
         board = [];
