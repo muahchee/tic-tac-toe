@@ -90,10 +90,57 @@ const CheckWin = (() =>{
     }
   }
   //--Check for vertical win --
+  const checkColWin = () =>{
+    const indexArrX = [];
+    const indexArrO = [];
+
+    //push indexes of every instance of each mark into respective arrays. if there are three occurances of the same index, that means a column victory!
+    for(let i = 0; i < board.length; i++){
+      board[i].forEach((item, index) =>{
+        if (item === "X") {indexArrX.push(index)}
+        else if (item === "O") {indexArrO.push(index)};
+      })
+    }
+
+    //counting how many occurances for each index
+
+    let XCounter0 = 0;
+    let XCounter1 = 0;
+    let XCounter2 = 0;
+
+    let OCounter0 = 0;
+    let OCounter1 = 0;
+    let OCounter2 = 0;
+
+    indexArrX.forEach((item) =>{
+      if (item === 0) {XCounter0++}
+      else if (item === 1) {XCounter1++}
+      else if (item === 2) {XCounter2++}
+    });
+
+    indexArrO.forEach((item) =>{
+      if (item === 0) {OCounter0++}
+      else if (item === 1) {OCounter1++}
+      else if (item === 2) {OCounter2++}
+    })
+
+    //if any of the counters are 3, the corresponding player is the winner!
+    if (XCounter0 === 3 || XCounter1 === 3 || XCounter2 === 3){
+
+      Players.player1.winner();
+      player1Win = Players.player1.getWinStatus();
+
+    } else if (OCounter0 === 3 || OCounter1 === 3 || OCounter2 === 3){
+
+      Players.player2.winner();
+      player2Win = Players.player2.getWinStatus();
+
+    }
+  }
 
   //--Check for diagonal win --
 
-  return {player1Win, player2Win, checkRowWin}
+  return {player1Win, player2Win, checkRowWin, checkColWin}
 
 })()
 
@@ -114,6 +161,7 @@ const Game = (() =>{
   const getTurn = () => turnOrder;
 
   const checkRowWin = CheckWin.checkRowWin;
+  const checkColWin = CheckWin.checkColWin;
 
 
   //print board on startup
@@ -151,6 +199,7 @@ const Game = (() =>{
 
       //check if win condition is met
       checkRowWin();
+      checkColWin();
 
       if (player1.getWinStatus() === true){
         printBoard();
@@ -195,12 +244,6 @@ const Game = (() =>{
 
   }
 
-  return {placeMark, getTurn, newGame, board}
+  return {placeMark, newGame}
 })();
 
-Game.placeMark(2,1)
-Game.placeMark(1,1)
-Game.placeMark(2,0)
-Game.placeMark(0,0)
-Game.placeMark(2,2)
-Game.newGame()
