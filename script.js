@@ -120,6 +120,17 @@ const Game = (() =>{
   printBoard();
   console.log("Player 1's turn!")
 
+  //new game
+  const newGame = () => {
+    newBoard();
+    board = Gameboard.board;
+    resetTurn();
+    player1.resetWinner();
+    player2.resetWinner();
+
+    printBoard();
+  }
+
   //place mark on specified cell
   const placeMark = (row, column) =>{
 
@@ -142,34 +153,18 @@ const Game = (() =>{
       checkRowWin();
 
       if (player1.getWinStatus() === true){
+        printBoard();
         console.log("Player 1 is the winner!");
 
-        //reset board
-        Gameboard.board = [];
-        Gameboard.newBoard()
-        printBoard();
-        resetTurn();
-        player1.resetWinner();
-        if (turnOrder % 2 == 0){
-          console.log("Player 2's turn!");
-        } else{
-          console.log("Player 1's turn!");
-        }  
+        //reset board, prevent further input
+        board = [];
 
       } else if (player2.getWinStatus() === true){
+        printBoard();
         console.log("Player 2 is the winner!");
 
-        //reset board
+        //reset board, prevent further input
         board = [];
-        newBoard()
-        printBoard();
-        resetTurn();
-        player2.resetWinner();
-        if (turnOrder % 2 == 0){
-          console.log("Player 2's turn!");
-        } else{
-          console.log("Player 1's turn!");
-        }  
 
       } else{
         //if no winner is determined, continue to next turn
@@ -200,5 +195,12 @@ const Game = (() =>{
 
   }
 
-  return {placeMark, getTurn}
+  return {placeMark, getTurn, newGame, board}
 })();
+
+Game.placeMark(2,1)
+Game.placeMark(1,1)
+Game.placeMark(2,0)
+Game.placeMark(0,0)
+Game.placeMark(2,2)
+Game.newGame()
