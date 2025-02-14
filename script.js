@@ -26,7 +26,6 @@ const Gameboard = (function(){
     for (let i = 0; i < board.length; i++){
       console.log(board[i].join("  "));
     }
-    console.log("syntax: game.placeMark(row, column)")
   }
 
   return {board, printBoard, newBoard};
