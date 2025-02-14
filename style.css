@@ -2,38 +2,65 @@
   box-sizing: border-box;
 }
 
+body{
+  display: flex;
+  justify-content: center;
+
+  background-color: antiquewhite;
+  padding-top: 50px;
+
+  font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+}
+
 .main-cont{
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
+
+  width: min(400px, 100%);
+}
+
+h1{
+  margin: 0;
 }
 
 .board-cont {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(3, 50px);
-  gap: 10px;
+  gap: 5px;
+
+  background-color: rgb(18, 18, 71);
 }
 
 .row0, .row1, .row2{
   display: grid;
   grid-template-columns: repeat(3, 50px);
-  gap: 10px;
+  gap: 5px;
 }
 
 .cell{
-  background-color: aquamarine;
+  background-color: antiquewhite;
   padding: 5px;
 
   display: grid;
   place-items: center;
-
 
 }
 
 .mark{
   width: 35px;
   max-width: 100%;
+}
+
+button.new-game{
+  font: inherit;
+  background-color: inherit;
+  padding: 8px 16px;
+  cursor: pointer;
+
+  margin-top: 20px;
+  border-radius: 10px;
 }

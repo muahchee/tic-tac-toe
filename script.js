@@ -43,6 +43,19 @@ const Players = (() =>{
       mark = "O";
     }
 
+    //store players' inputted names
+    let inputName = name;
+
+    const askInputName = () => {
+      if (name === "player1"){
+        inputName = prompt(`Please input your name, Player 1.`, "Player 1")
+      } else{
+        inputName = prompt(`Please input your name, Player 2.`, "Player 2")
+      } 
+    }
+
+    const getInputname = () => inputName;
+
     let winStatus = false;
 
     const winner = () => winStatus = true;
@@ -53,7 +66,7 @@ const Players = (() =>{
     const getName = () => name;
     const getWinStatus = () => winStatus;
 
-    return {getName, getMark, getWinStatus, winner, resetWinner}
+    return {getName, getMark, getWinStatus, winner, resetWinner, askInputName, getInputname}
   }
 
   const player1 = createPlayers("player1");
@@ -311,6 +324,12 @@ const Game = (() =>{
 })();
 
 const Display =(() =>{
+  Players.player1.askInputName();
+  Players.player2.askInputName();
+
+  player1Name = Players.player1.getInputname();
+  player2Name = Players.player2.getInputname();
+
   let board = Gameboard.board;
 
   const player1 = Players.player1;
@@ -325,11 +344,11 @@ const Display =(() =>{
   const setGameStatus = (() =>{
     if (player1.getWinStatus() === true){
 
-      gameStatus.textContent = "Player 1 wins!"
+      gameStatus.textContent = `${player1Name} wins!`
 
     } else if (player2.getWinStatus() === true){
 
-      gameStatus.textContent = "Player 2 wins!"
+      gameStatus.textContent = `${player2Name} wins!`
 
     } else if (CheckWin.checkDraw() === true){
 
@@ -338,9 +357,9 @@ const Display =(() =>{
     } else{
 
       if (Game.getTurn() % 2 == 0){
-        gameStatus.textContent = "Player 2's turn."
+        gameStatus.textContent = `${player2Name}'s turn`
       } else{
-        gameStatus.textContent = "Player 1's turn."
+        gameStatus.textContent = `${player1Name}'s turn`
       }
 
     }
