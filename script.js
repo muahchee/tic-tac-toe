@@ -178,7 +178,7 @@ const CheckWin = (() =>{
     const checkEmptySpace = [];
 
     board.forEach((item) =>{
-      //checks each row to see if there's an empty space, result is pushed to checkEmptySpace array
+      //checks each row to see if there's an empty space, result is pushed to checkEmptySpace array (true/false)
       checkEmptySpace.push(item.includes("*"));
     });
 
@@ -251,7 +251,7 @@ const Game = (() =>{
       //Placing the Mark. go to board array item specified by "row" and replace inner item at index "column" with "player"
       board[row].splice(column, 1, playermark);
 
-      //check if win condition is met
+      //check if win or draw condition is met
       checkRowWin();
       checkColWin();
       checkDiagonalWin();
@@ -279,7 +279,7 @@ const Game = (() =>{
         board = [];
 
       } else{
-        //if no winner is determined, continue to next turn
+        //if no winner is determined and there are still empty spaces, continue to next turn
         //add to turnOrder counter
         nextTurn();
           
@@ -307,6 +307,78 @@ const Game = (() =>{
 
   }
 
-  return {placeMark, newGame}
+  return {placeMark, newGame, getTurn}
 })();
+
+const Display =(() =>{
+  let board = Gameboard.board;
+
+  const player1 = Players.player1;
+  const player2 = Players.player2;
+
+  const boardCont = document.querySelector(".board-cont");
+
+  //--render array board onto webpage (no marks)--
+  const displayBoard = () => {
+
+    for (let i = 0; i < board.length; i++){
+      const rowCont = document.createElement("div");
+      rowCont.setAttribute("class", `row${i}`);
+      boardCont.appendChild(rowCont);
+  
+      for(let j = 0; j < board[i].length; j++){
+        const columnCell = document.createElement("div");
+        columnCell.setAttribute("class", "cell");
+        columnCell.setAttribute("row", i);
+        columnCell.setAttribute("col", j);
+        rowCont.appendChild(columnCell);
+      }
+    }
+  }
+
+  const setCellCLick = (() =>{
+  //--add mark when player clicks on cell--
+
+    const cellList = document.querySelectorAll(".cell");
+
+    //loop through cellList, apply event listener to each .cell
+    for(let i = 0; i < cellList.length; i++){
+      cellList[i].addEventListener("click", () =>{
+        const rowCoord = Number(cellList[i].getAttribute('row'));
+        const colCoord = Number(cellList[i].getAttribute('col'));
+
+        //check if cell is occupied, nothing happens if there's already a mark there
+        if (!cellList[i].firstChild && player1.getWinStatus() === false && player2.getWinStatus() === false){
+
+          if (Game.getTurn() % 2 === 0){
+            //even turns mean player2
+  
+            const Omark = document.createElement("img");
+            Omark.setAttribute("class", "mark");
+            Omark.setAttribute("src", "imgs/o.svg");
+  
+            cellList[i].appendChild(Omark);
+          } else{
+            //player1 mark
+            const Xmark = document.createElement("img");
+            Xmark.setAttribute("class", "mark");
+            Xmark.setAttribute("src", "imgs/x.svg"); 
+  
+            //odd turns mean player1
+            cellList[i].appendChild(Xmark);
+          }
+          
+          Game.placeMark(rowCoord, colCoord);
+        };
+
+      })
+    }
+  });
+
+ return {displayBoard, boardCont, setCellCLick}
+
+})();
+
+Display.displayBoard()
+Display.setCellCLick();
 
