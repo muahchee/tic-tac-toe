@@ -316,10 +316,40 @@ const Display =(() =>{
   const player1 = Players.player1;
   const player2 = Players.player2;
 
+  const mainCont = document.querySelector(".main-cont")
   const boardCont = document.querySelector(".board-cont");
+
+  //--display game status--
+  const gameStatus = document.querySelector(".status-text");
+
+  const setGameStatus = (() =>{
+    if (player1.getWinStatus() === true){
+
+      gameStatus.textContent = "Player 1 wins!"
+
+    } else if (player2.getWinStatus() === true){
+
+      gameStatus.textContent = "Player 2 wins!"
+
+    } else if (CheckWin.checkDraw() === true){
+
+      gameStatus.textContent = "It's a draw!"
+
+    } else{
+
+      if (Game.getTurn() % 2 == 0){
+        gameStatus.textContent = "Player 2's turn."
+      } else{
+        gameStatus.textContent = "Player 1's turn."
+      }
+
+    }
+  })
 
   //--render array board onto webpage (no marks)--
   const displayBoard = () => {
+
+    setGameStatus();
 
     for (let i = 0; i < board.length; i++){
       const rowCont = document.createElement("div");
@@ -333,8 +363,8 @@ const Display =(() =>{
         columnCell.setAttribute("col", j);
         rowCont.appendChild(columnCell);
       }
-    }
-  }
+    };
+  };
 
   const setCellCLick = (() =>{
   //--add mark when player clicks on cell--
@@ -348,6 +378,7 @@ const Display =(() =>{
         const colCoord = Number(cellList[i].getAttribute('col'));
 
         //check if cell is occupied, nothing happens if there's already a mark there
+        //also if stops the game if winner is determined
         if (!cellList[i].firstChild && player1.getWinStatus() === false && player2.getWinStatus() === false){
 
           if (Game.getTurn() % 2 === 0){
@@ -369,11 +400,29 @@ const Display =(() =>{
           }
           
           Game.placeMark(rowCoord, colCoord);
+          setGameStatus();
         };
 
       })
     }
   });
+
+  //--make new game button--
+  const newGamebtn = document.querySelector(".new-game");
+
+  newGamebtn.addEventListener("click", () =>{
+    Game.newGame();
+
+    //remove all cells
+    while (boardCont.firstChild){
+      boardCont.removeChild(boardCont.lastChild);
+    }
+
+    //re-display fresh cells
+    displayBoard();
+    //re-set event listeners
+    setCellCLick()
+  })
 
  return {displayBoard, boardCont, setCellCLick}
 
